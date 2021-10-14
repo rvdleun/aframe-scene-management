@@ -1,5 +1,6 @@
 import 'aframe';
 import './scene-manager';
+import './components/test.component';
 
 setTimeout(() => {
     AFRAME.registerSceneController("#red", {

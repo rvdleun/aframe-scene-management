@@ -1,5 +1,5 @@
 AFRAME.registerComponent('test', {
-    init: function() {
+    tick: function() {
         console.log('Test component initialized');
     }
 });

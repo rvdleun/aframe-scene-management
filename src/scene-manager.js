@@ -9,6 +9,15 @@ let currentRenderStrategy;
 const RenderStrategies = {
     dom: {
         activeEl: null,
+        scenesEl: null,
+
+        init: function() {
+            const scenesEl = document.createElement('a-entity');
+            scenesEl.setAttribute('class', 'aframe-scene-manager');
+            document.querySelector('a-scene').appendChild(scenesEl);
+
+            this.scenesEl = scenesEl;
+        },
 
         onElAvailable: function(el) {
             const scene = document.querySelector('a-scene');
@@ -18,19 +27,16 @@ const RenderStrategies = {
         },
     
         onEnter: function(el) {
-            const scene = document.querySelector('a-scene');
-
             const entity = document.createElement('a-entity');
             entity.innerHTML = el.innerHTML;
-            scene.appendChild(entity);
+            this.scenesEl.appendChild(entity);
 
             this.activeEl = entity;
         },
 
         onExit: function(el) {
-            const scene = document.querySelector('a-scene');
             if (this.activeEl) {
-                scene.removeChild(this.activeEl);
+                this.scenesEl.removeChild(this.activeEl);
             }
 
             this.activeEl = null;
@@ -38,6 +44,8 @@ const RenderStrategies = {
     },
 
     visible: {
+        init: function() { },
+
         onElAvailable: function(el) {
             const scene = document.querySelector('a-scene');
             if (!scene.contains(el)) {
@@ -104,8 +112,8 @@ AFRAME.navigateToScene = function(route) {
     window.location.hash = route;
 
     currentScene = newScene;
-    currentScene.onEnter({ parameters });
     currentRenderStrategy.onEnter(currentScene.el);
+    currentScene.onEnter({ parameters });
 
     return true;
 };
@@ -130,6 +138,8 @@ AFRAME.initialiseSceneManager = function(options) {
         console.error('Unknown render strategy: ', renderStrategy);
         return;
     }
+
+    currentRenderStrategy.init();
 
     return Promise.all(
         registeredSceneControllers.map(async ({ selector, options}) => {
