@@ -6,6 +6,7 @@ let currentScene = null;
 let currentRenderStrategy;
 let parameters = {};
 let scenesEl;
+let updateHash;
 
 const RenderStrategies = {};
 
@@ -53,7 +54,9 @@ AFRAME.navigateToScene = async function(route) {
         currentRenderStrategy.onExit(currentScene.el, scenesEl);
     }
 
-    window.location.hash = route;
+    if (updateHash) {
+        window.location.hash = route;
+    }
 
     currentScene = newScene;
     const el = await currentRenderStrategy.onEnter(currentScene.el, scenesEl);
@@ -81,14 +84,19 @@ AFRAME.initialiseSceneManager = function(options) {
         listenForHashChange: true,
         renderStrategy: 'visible',
         scenesElement: 'a-scene',
+        useHash: true,
         ...options
     };
 
     const {
         defaultRoute,
+        listenForHashChange,
         renderStrategy,
-        scenesElement
+        scenesElement,
+        useHash
     } = options;
+
+    updateHash = useHash;
 
     currentRenderStrategy = RenderStrategies[renderStrategy];
     if (!currentRenderStrategy) {
@@ -152,17 +160,23 @@ AFRAME.initialiseSceneManager = function(options) {
             return true;
         }))
         .then(() => {
-            function navigateToHash() {
-                const route = window.location.hash ? window.location.hash.substring(1) : defaultRoute;
-                
-                AFRAME.navigateToScene(route) || AFRAME.navigateToScene(defaultRoute);
-            }
-        
-            window.addEventListener('hashchange', () => {
+            if (useHash) {
+                function navigateToHash() {
+                    const route = window.location.hash ? window.location.hash.substring(1) : defaultRoute;
+                    
+                    AFRAME.navigateToScene(route) || AFRAME.navigateToScene(defaultRoute);
+                }
+            
+                if (listenForHashChange) {
+                    window.addEventListener('hashchange', () => {
+                        navigateToHash();
+                    });
+                }
+            
                 navigateToHash();
-            });
-        
-            navigateToHash();
+            } else {
+                AFRAME.navigateToScene(defaultRoute);
+            }
         });
 }
 

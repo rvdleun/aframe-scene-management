@@ -26,7 +26,7 @@ AFRAME.registerSceneController("/test", {
 });
 
 AFRAME.initialiseSceneManager({
-    defaultRoute: "/environment/default",
+    defaultRoute: "/environment/egypt",
     renderStrategy: "visible",
     scenesElement: "#scenes"
 });
