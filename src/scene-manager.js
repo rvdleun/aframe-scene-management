@@ -67,8 +67,8 @@ AFRAME.navigateToScene = function(route) {
     return true;
 };
 
-AFRAME.registerSceneController = function(selector, options) {
-    registeredSceneControllers.push({ selector, options });
+AFRAME.registerSceneController = function(route, options) {
+    registeredSceneControllers.push({ options, route });
 }
 
 AFRAME.initialiseSceneManager = function(options) {
@@ -91,12 +91,11 @@ AFRAME.initialiseSceneManager = function(options) {
     currentRenderStrategy.init();
 
     return Promise.all(
-        registeredSceneControllers.map(async ({ selector, options}) => {
+        registeredSceneControllers.map(async ({ options, route }) => {
             let el; 
 
-            if (selector.startsWith('url:')) {
-                const url = selector.substring(4);
-                const page = await fetch(url);
+            if (options.src) {
+                const page = await fetch(options.src);
 
                 if (!page.ok) {
                     console.error(`Tried to register a scene, but had issues while fetching the scene ${selector}`);
@@ -106,13 +105,15 @@ AFRAME.initialiseSceneManager = function(options) {
                 const html = await page.text();
                 el = document.createElement('a-entity');
                 el.innerHTML = html;
-            } else {
-                el = document.querySelector(selector);
+            } else if (options.selector) {
+                el = document.querySelector(options.selector);
 
                 if (!el) {
                     console.error(`Tried to register a scene, but could not find ID ${id}`);
                     return false;
                 }
+            } else {
+                console.error(`Tried to register a scene, but no selector or src provided ${route}`);
             }
 
             if (!el) {
@@ -130,6 +131,7 @@ AFRAME.initialiseSceneManager = function(options) {
             scenes.push({
                 ...options,
                 el,
+                route,
                 onEnter: onEnter || emptyFunction,
                 onExit: onExit || emptyFunction
             });

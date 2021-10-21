@@ -1,20 +1,24 @@
 import './components/test.component';
 
-AFRAME.registerSceneController("url:/scenes/intro.html", {
-    route: "/",
+AFRAME.registerSceneController("/", {
+    src: "/scenes/intro.html"    
 });
 
-AFRAME.registerSceneController("url:/scenes/environment.html", {
+AFRAME.registerSceneController("/environment/:preset", {
+    src: "/scenes/environment.html",
+
     onEnter: (event) => {
         const { el, parameters } = event;
         const { preset } = parameters; 
 
-        console.log(event);
         setTimeout(() => {
             el.querySelector('.environment').setAttribute('environment', { preset });
         });
      },
-    route: "/environment/:preset",
+});
+
+AFRAME.registerSceneController("/test", {
+    selector: '#scene-test'
 });
 
 setTimeout(() => {
