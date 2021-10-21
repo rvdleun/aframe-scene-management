@@ -4,8 +4,10 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "build": "webpack",
-    "dev": "webpack-dev-server"
+    "build": "npm run build:dev && npm run build:prod",
+    "build:dev": "webpack --entry=\"./src/index.js\" --output-filename=\"aframe-scene-manager.js\" --output-path=\"./dist\"  --devtool=none --mode=development",
+    "build:prod": "webpack --entry=\"./src/index.js\" --output-filename=\"aframe-scene-manager.min.js\" --output-path=\"./dist\" --mode=production",
+    "dev": " npx webpack-dev-server --config=webpack.dev.config.jsr"
   },
   "author": "",
   "license": "ISC",
