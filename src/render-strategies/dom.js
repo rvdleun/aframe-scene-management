@@ -1,4 +1,4 @@
-export const RenderStrategyDom = {
+AFRAME.registerSceneRenderStrategy('dom', {
     activeEl: null,
     scenesEl: null,
 
@@ -30,4 +30,4 @@ export const RenderStrategyDom = {
         this.activeEl = null;
         return true;
     }
-};
+});

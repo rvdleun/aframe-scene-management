@@ -1,6 +1,3 @@
-import { RenderStrategyDom } from './render-strategies/dom';
-import { RenderStrategyVisible } from './render-strategies/visible';
-
 const emptyFunction = () => {};
 const registeredSceneControllers = [];
 const scenes = [];
@@ -10,10 +7,7 @@ let currentRenderStrategy;
 let parameters = {};
 let scenesEl;
 
-const RenderStrategies = {
-    dom: RenderStrategyDom,
-    visible: RenderStrategyVisible,
-}
+const RenderStrategies = {};
 
 function getRouteCommands(route) {
     if (route[0] === "/") {
@@ -68,11 +62,21 @@ AFRAME.navigateToScene = async function(route) {
     return true;
 };
 
+AFRAME.registerSceneRenderStrategy = function(id, renderStrategy) {
+    RenderStrategies[id] = renderStrategy;
+}
+
 AFRAME.registerSceneController = function(route, options) {
     registeredSceneControllers.push({ options, route });
 }
 
 AFRAME.initialiseSceneManager = function(options) {
+    const scene = document.querySelector('a-scene');
+    if (!scene) {
+        setTimeout(() => AFRAME.initialiseSceneManager(options));
+        return;
+    }
+
     options = {
         renderStrategy: 'visible',
         scenesElement: 'a-scene',
@@ -160,3 +164,6 @@ AFRAME.initialiseSceneManager = function(options) {
             navigateToHash();
         });
 }
+
+require('./render-strategies/dom');
+require('./render-strategies/visible');

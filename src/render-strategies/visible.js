@@ -1,4 +1,4 @@
-export const RenderStrategyVisible = {
+AFRAME.registerSceneRenderStrategy('visible', {
     init: function() { },
 
     onElAvailable: function(el, scene) {
@@ -17,4 +17,4 @@ export const RenderStrategyVisible = {
     onExit: function(el) {
         el.setAttribute('visible', false);
     }
-}
+});
