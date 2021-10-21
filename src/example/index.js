@@ -11,9 +11,7 @@ AFRAME.registerSceneController("/environment/:preset", {
         const { el, parameters } = event;
         const { preset } = parameters; 
 
-        setTimeout(() => {
-            el.querySelector('.environment').setAttribute('environment', { preset });
-        });
+        el.querySelector('.environment').setAttribute('environment', { preset });
      },
 });
 
@@ -24,6 +22,6 @@ AFRAME.registerSceneController("/test", {
 setTimeout(() => {
     AFRAME.initialiseSceneManager({
         defaultRoute: "/environment/default",
-        renderStrategy: "dom"
+        renderStrategy: "visible"
     });
 });

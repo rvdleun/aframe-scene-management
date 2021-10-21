@@ -23,14 +23,18 @@ export const RenderStrategyDom = {
         this.scenesEl.appendChild(entity);
 
         this.activeEl = entity;
-        return entity;
+
+        return new Promise(resolve => {
+            setTimeout(() => resolve(entity))
+        });
     },
 
-    onExit: function(el) {
+    onExit: async function(el) {
         if (this.activeEl) {
             this.scenesEl.removeChild(this.activeEl);
         }
 
         this.activeEl = null;
+        return true;
     }
 };

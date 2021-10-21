@@ -45,7 +45,7 @@ function getRouteParameters(route, compareRoute) {
     return true;
 }
 
-AFRAME.navigateToScene = function(route) {
+AFRAME.navigateToScene = async function(route) {
     const newScene = scenes.find(scene => getRouteParameters(route, scene.route));
     
     if (!newScene) {
@@ -61,7 +61,7 @@ AFRAME.navigateToScene = function(route) {
     window.location.hash = route;
 
     currentScene = newScene;
-    const el = currentRenderStrategy.onEnter(currentScene.el);
+    const el = await currentRenderStrategy.onEnter(currentScene.el);
     currentScene.onEnter({ el, parameters });
 
     return true;
