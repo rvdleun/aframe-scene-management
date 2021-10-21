@@ -1,3 +1,6 @@
+import { RenderStrategyDom } from './render-strategies/dom';
+import { RenderStrategyVisible } from './render-strategies/visible';
+
 const emptyFunction = () => {};
 const registeredSceneControllers = [];
 const scenes = [];
@@ -7,62 +10,8 @@ let parameters = {};
 let currentRenderStrategy;
 
 const RenderStrategies = {
-    dom: {
-        activeEl: null,
-        scenesEl: null,
-
-        init: function() {
-            const scenesEl = document.createElement('a-entity');
-            scenesEl.setAttribute('class', 'aframe-scene-manager');
-            document.querySelector('a-scene').appendChild(scenesEl);
-
-            this.scenesEl = scenesEl;
-        },
-
-        onElAvailable: function(el) {
-            const scene = document.querySelector('a-scene');
-            if (scene.contains(el)) {
-                el.parentElement.removeChild(el);
-            }
-        },
-    
-        onEnter: function(el) {
-            const entity = document.createElement('a-entity');
-            entity.innerHTML = el.innerHTML;
-            this.scenesEl.appendChild(entity);
-
-            this.activeEl = entity;
-        },
-
-        onExit: function(el) {
-            if (this.activeEl) {
-                this.scenesEl.removeChild(this.activeEl);
-            }
-
-            this.activeEl = null;
-        }
-    },
-
-    visible: {
-        init: function() { },
-
-        onElAvailable: function(el) {
-            const scene = document.querySelector('a-scene');
-            if (!scene.contains(el)) {
-                scene.appendChild(el);
-            }
-
-            el.setAttribute('visible', false);
-        },
-    
-        onEnter: function(el) {
-            el.setAttribute('visible', true);
-        },
-
-        onExit: function(el) {
-            el.setAttribute('visible', false);
-        }
-    }
+    dom: RenderStrategyDom,
+    visible: RenderStrategyVisible,
 }
 
 function getRouteCommands(route) {
@@ -112,8 +61,8 @@ AFRAME.navigateToScene = function(route) {
     window.location.hash = route;
 
     currentScene = newScene;
-    currentRenderStrategy.onEnter(currentScene.el);
-    currentScene.onEnter({ parameters });
+    const el = currentRenderStrategy.onEnter(currentScene.el);
+    currentScene.onEnter({ el, parameters });
 
     return true;
 };
