@@ -1,8 +1,7 @@
 export const RenderStrategyVisible = {
     init: function() { },
 
-    onElAvailable: function(el) {
-        const scene = document.querySelector('a-scene');
+    onElAvailable: function(el, scene) {
         if (!scene.contains(el)) {
             scene.appendChild(el);
         }

@@ -6,8 +6,9 @@ const registeredSceneControllers = [];
 const scenes = [];
 
 let currentScene = null;
-let parameters = {};
 let currentRenderStrategy;
+let parameters = {};
+let scenesEl;
 
 const RenderStrategies = {
     dom: RenderStrategyDom,
@@ -55,13 +56,13 @@ AFRAME.navigateToScene = async function(route) {
 
     if (currentScene) {
         currentScene.onExit(currentScene);
-        currentRenderStrategy.onExit(currentScene.el);
+        currentRenderStrategy.onExit(currentScene.el, scenesEl);
     }
 
     window.location.hash = route;
 
     currentScene = newScene;
-    const el = await currentRenderStrategy.onEnter(currentScene.el);
+    const el = await currentRenderStrategy.onEnter(currentScene.el, scenesEl);
     currentScene.onEnter({ el, parameters });
 
     return true;
@@ -74,17 +75,25 @@ AFRAME.registerSceneController = function(route, options) {
 AFRAME.initialiseSceneManager = function(options) {
     options = {
         renderStrategy: 'visible',
+        scenesElement: 'a-scene',
         ...options
     };
 
     const {
         defaultRoute,
-        renderStrategy
+        renderStrategy,
+        scenesElement
     } = options;
 
     currentRenderStrategy = RenderStrategies[renderStrategy];
     if (!currentRenderStrategy) {
         console.error('Unknown render strategy: ', renderStrategy);
+        return;
+    }
+
+    scenesEl = document.querySelector(scenesElement);
+    if (!scenesEl) {
+        console.error('Could not find scenes element: ', scenesElement);
         return;
     }
 
@@ -109,7 +118,7 @@ AFRAME.initialiseSceneManager = function(options) {
                 el = document.querySelector(options.selector);
 
                 if (!el) {
-                    console.error(`Tried to register a scene, but could not find ID ${id}`);
+                    console.error(`Tried to register a scene, but could not find ID for ${route}`);
                     return false;
                 }
             } else {
@@ -121,7 +130,7 @@ AFRAME.initialiseSceneManager = function(options) {
                 return false;
             }
 
-            currentRenderStrategy.onElAvailable(el);
+            currentRenderStrategy.onElAvailable(el, scenesEl);
         
             const { 
                 onEnter,

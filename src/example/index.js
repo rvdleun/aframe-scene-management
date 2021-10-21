@@ -22,6 +22,7 @@ AFRAME.registerSceneController("/test", {
 setTimeout(() => {
     AFRAME.initialiseSceneManager({
         defaultRoute: "/environment/default",
-        renderStrategy: "visible"
+        renderStrategy: "visible",
+        scenesElement: "#scenes"
     });
 });

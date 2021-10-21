@@ -2,25 +2,18 @@ export const RenderStrategyDom = {
     activeEl: null,
     scenesEl: null,
 
-    init: function() {
-        const scenesEl = document.createElement('a-entity');
-        scenesEl.setAttribute('class', 'aframe-scene-manager');
-        document.querySelector('a-scene').appendChild(scenesEl);
+    init: function() { },
 
-        this.scenesEl = scenesEl;
-    },
-
-    onElAvailable: function(el) {
-        const scene = document.querySelector('a-scene');
+    onElAvailable: function(el, scene) {
         if (scene.contains(el)) {
             el.parentElement.removeChild(el);
         }
     },
 
-    onEnter: function(el) {
+    onEnter: function(el, scene) {
         const entity = document.createElement('a-entity');
         entity.innerHTML = el.innerHTML;
-        this.scenesEl.appendChild(entity);
+        scene.appendChild(entity);
 
         this.activeEl = entity;
 
@@ -29,9 +22,9 @@ export const RenderStrategyDom = {
         });
     },
 
-    onExit: async function(el) {
+    onExit: async function(el, scene) {
         if (this.activeEl) {
-            this.scenesEl.removeChild(this.activeEl);
+            scene.removeChild(this.activeEl);
         }
 
         this.activeEl = null;
