@@ -1,3 +1,7 @@
+import 'aframe';
+import 'aframe-environment-component';
+import '../src/index';
+
 import './components/test.component';
 
 AFRAME.registerSceneController("/", {

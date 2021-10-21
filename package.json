@@ -1,8 +1,8 @@
 {
-  "name": "rvdleun-aframe-starter-kit",
+  "name": "aframe-scene-manager",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "build": "webpack",
     "dev": "webpack-dev-server"

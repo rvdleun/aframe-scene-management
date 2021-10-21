@@ -3,27 +3,23 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 
 module.exports = {
-    entry: './src/index.js',
+    entry: './example/index.js',
     devServer: {
-        contentBase: path.resolve(__dirname, 'public'),
+        contentBase: path.resolve(__dirname, 'example', 'public'),
         hot: true,
         port: 8000,
         watchContentBase: true,
     },
-    output: {
-        filename: 'main.js',
-        path: path.resolve(__dirname, 'dist'),
-    },
     plugins: [
         new CopyWebpackPlugin([
-            { from: 'public' }
+            { from: 'example/public' }
         ],
         {
             ignore: ['index.html']
         }),
         new HtmlWebpackPlugin({
             inject: 'head',
-            template: 'public/index.html'
+            template: 'example/public/index.html'
         }),
     ]
 };
