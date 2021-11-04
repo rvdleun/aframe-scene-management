@@ -1,1 +1,7 @@
-<a-plane color="red" position="0 1.6 -2"></a-plane>
+<a-plane color="gray" position="0 0 0" rotation="270 0 0" scale="10 10 10"></a-plane>
+<a-sky color="black"></a-sky>
+
+<a-entity position="0 1.6 -3">
+    <a-entity material="color: white" geometry="primitive: cone" position="0 0.2 0" scale=".15 .5 .5"  animation="property: position.y; from: 0.2; to: 0.4; dur: 750; loop: true; dir: alternate"></a-entity>
+    <a-text align="center" position="0 -.25 0" value="Pick a scene"></a-text>
+</a-entity>

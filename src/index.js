@@ -11,6 +11,10 @@ let updateHash;
 const RenderStrategies = {};
 
 function getRouteCommands(route) {
+    if (!route) {
+        return [];
+    }
+
     if (route[0] === "/") {
         route = route.substring(1);
     }
@@ -33,7 +37,6 @@ function getRouteParameters(route, compareRoute) {
             const id = compareCommands[i].substring(1);
             parameters[id] = routeCommands[i];
         } else if(routeCommands[i] !== compareCommands[i]) {
-            console.log('Not the same', routeCommands[i], '!==', compareCommands[i], i);
             return false;
         }
     }
@@ -81,6 +84,7 @@ AFRAME.initialiseSceneManager = function(options) {
     }
 
     options = {
+        defaultRoute: '/',
         listenForHashChange: true,
         renderStrategy: 'visible',
         scenesElement: 'a-scene',
@@ -180,5 +184,6 @@ AFRAME.initialiseSceneManager = function(options) {
         });
 }
 
+require('./components/navigate-to-scene');
 require('./render-strategies/dom');
 require('./render-strategies/visible');

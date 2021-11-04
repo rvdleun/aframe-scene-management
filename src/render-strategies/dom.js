@@ -5,7 +5,7 @@ AFRAME.registerSceneRenderStrategy('dom', {
     init: function() { },
 
     onElAvailable: function(el, scene) {
-        if (scene.contains(el)) {
+        if (el.parentElement) {
             el.parentElement.removeChild(el);
         }
     },
