@@ -11,7 +11,7 @@ AFRAME.registerSceneController("/", {
 AFRAME.registerSceneController("/aframe-example", {
     selector: '#scene-aframe-example',
 
-    onEnter: function() {
+    onEntering: function() {
         Array.from(document.querySelectorAll('.menu-text')).forEach(el => {
             el.setAttribute('color', 'black');
         })
@@ -27,7 +27,7 @@ AFRAME.registerSceneController("/aframe-example", {
 AFRAME.registerSceneController("/primitive/:primitive", {
     src: "/scenes/primitive.html",
 
-    onEnter: (event) => {
+    onEntering: (event) => {
         const { el, parameters } = event;
         const { primitive } = parameters; 
 
@@ -40,7 +40,7 @@ AFRAME.registerSceneController("/primitive/:primitive", {
 AFRAME.registerSceneController("/sky/:color", {
     src: "/scenes/sky.html",
 
-    onEnter: (event) => {
+    onEntering: (event) => {
         // Taken from https://stackoverflow.com/questions/48484767/javascript-check-if-string-is-valid-css-color
         function isColor(strColor) {
             const s = new Option().style;
@@ -68,6 +68,20 @@ AFRAME.registerSceneController("/sky/:color", {
 });
 
 AFRAME.initialiseSceneManager({
+    onTransitionEnd: function() {
+        return new Promise(resolve => {
+            document.querySelector('a-scene').setAttribute('style', 'opacity: 1');
+
+            setTimeout(resolve, 500);
+        });
+    },
+    onTransitionStart: function() {
+        return new Promise(resolve => {
+            document.querySelector('a-scene').setAttribute('style', 'opacity: 0;  pointer-events: none');
+
+            setTimeout(resolve, 500);
+        });
+    },
     renderStrategy: "dom",
     scenesElement: "#scenes"
 });

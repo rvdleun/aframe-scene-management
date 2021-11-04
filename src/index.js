@@ -1,4 +1,5 @@
 const emptyFunction = () => {};
+const emptyResolveFunction = () => Promise.resolve();
 const registeredSceneControllers = [];
 const scenes = [];
 
@@ -6,6 +7,9 @@ let currentScene = null;
 let currentRenderStrategy;
 let parameters = {};
 let scenesEl;
+let transitionEnd;
+let transitionStart;
+let transitioning = false;
 let updateHash;
 
 const RenderStrategies = {};
@@ -52,7 +56,12 @@ AFRAME.navigateToScene = async function(route) {
         return false;
     }
 
+    transitioning = true;
+    const playTransitionEnd = !!currentScene;
+
     if (currentScene) {
+        currentScene.onExiting(currentScene);
+        await transitionStart();
         currentScene.onExit(currentScene);
         currentRenderStrategy.onExit(currentScene.el, scenesEl);
     }
@@ -63,7 +72,14 @@ AFRAME.navigateToScene = async function(route) {
 
     currentScene = newScene;
     const el = await currentRenderStrategy.onEnter(currentScene.el, scenesEl);
+    currentScene.onEntering({ el, parameters });
+
+    if (playTransitionEnd) {
+        await transitionEnd();
+    }
     currentScene.onEnter({ el, parameters });
+
+    transitioning = false;
 
     return true;
 };
@@ -95,11 +111,15 @@ AFRAME.initialiseSceneManager = function(options) {
     const {
         defaultRoute,
         listenForHashChange,
+        onTransitionEnd,
+        onTransitionStart,
         renderStrategy,
         scenesElement,
         useHash
     } = options;
 
+    transitionEnd = onTransitionEnd || emptyResolveFunction;
+    transitionStart = onTransitionStart || emptyResolveFunction;
     updateHash = useHash;
 
     currentRenderStrategy = RenderStrategies[renderStrategy];
@@ -151,7 +171,9 @@ AFRAME.initialiseSceneManager = function(options) {
         
             const { 
                 onEnter,
+                onEntering,
                 onExit,
+                onExiting,
             } = options;
         
             scenes.push({
@@ -159,7 +181,9 @@ AFRAME.initialiseSceneManager = function(options) {
                 el,
                 route,
                 onEnter: onEnter || emptyFunction,
-                onExit: onExit || emptyFunction
+                onEntering: onEntering || emptyFunction,
+                onExit: onExit || emptyFunction,
+                onExiting: onExiting || emptyFunction
             });
             return true;
         }))
@@ -173,6 +197,10 @@ AFRAME.initialiseSceneManager = function(options) {
             
                 if (listenForHashChange) {
                     window.addEventListener('hashchange', () => {
+                        if (transitioning) {
+                            return;
+                        }
+
                         navigateToHash();
                     });
                 }
